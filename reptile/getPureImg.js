@@ -7,14 +7,12 @@ const colors = require('colors');
 const moment = require('moment');
 
 const refererPrefix = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id=';
-const illustUrlPrefix = 'https://i.pximg.net/img-original/img/2018/03/12/00/31/32/';
-const illustUrlSuffix = '_p0.jpg';
+const illustUrlPrefix = 'https://i.pximg.net';
 
-const dateFormated = moment().format('YYYY-MM-DD');
-
-function getPureImg (illustId) {
+function getPureImg (imgPath) {
+  const { illustId, name } = spliceIllustIdFormPath(imgPath);
   const referer = `${refererPrefix}${illustId}`;
-  const illustUrl = `${illustUrlPrefix}${illustId}${illustUrlSuffix}`;
+  const illustUrl = `${illustUrlPrefix}${imgPath}`;
   return new Promise((resolve, reject) => {
     console.log(`下载中:${illustId}`.gray);
     superagent
@@ -33,8 +31,9 @@ function getPureImg (illustId) {
   })
 }
 
-function writeBufferPureImg (buffer, name) {
-  const filename = `${name}_p0.jpg`;
+function writeBufferPureImg (buffer, id) {
+  const dateFormated = moment().format('YYYY-MM-DD');
+  const filename = `${id}_p0.jpg`;
   const dirPath = path.join(process.cwd(), `${dateFormated} pixiv`);
   if (!fsExistsSync(dirPath)) {
     fs.mkdirSync(`${dateFormated} pixiv`);
@@ -50,7 +49,16 @@ function writeBufferPureImg (buffer, name) {
   }) 
 }
 
-function fsExistsSync(path) {
+function spliceIllustIdFormPath (imgPath) {
+  const pathList = imgPath.split('/');
+  const filename = pathList.pop();
+  return {
+    illustId: filename.split('_')[0],
+    name: filename
+  };
+}
+
+function fsExistsSync (path) {
   try {
     fs.accessSync(path, fs.F_OK);
   } catch (e) {
