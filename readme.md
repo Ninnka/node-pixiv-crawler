@@ -4,8 +4,8 @@
 
 ## Features
 
-- 根据illust_id爬取一张图片单张源图片
-- 根据url解析出illust_id，爬出单张源图片
+- 输入illust_id，爬取一张图片单张源图片
+- 输入图片的有效pixiv-url，解析出illust_id，爬出单张源图片
 
 ## Todos
 

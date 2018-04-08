@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "nodemon ./bin/www",
     "initData": "node ./init/init-data.js",
-    "testPureImg": "node ./init/testPureImg.js"
+    "testPureImg": "node ./init/testPureImg.js",
+    "testFetchAndParseUrl": "node ./init/testFetchAndParseUrl.js"
   },
   "dependencies": {
     "body-parser": "~1.17.1",

@@ -3,34 +3,41 @@ const path = require('path');
 const request = require('superagent');
 const superagent = require('superagent-charset')(request);
 const colors = require('colors');
-
 const moment = require('moment');
 
-const refererPrefix = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id=';
+const referer = 'https://www.pixiv.net/';
 const illustUrlPrefix = 'https://i.pximg.net';
 
+/**
+ *
+ * @param {String} imgPath
+ */
 function getPureImg (imgPath) {
   const { illustId, name } = spliceIllustIdFormPath(imgPath);
-  const referer = `${refererPrefix}${illustId}`;
-  const illustUrl = `${illustUrlPrefix}${imgPath}`;
+  const illustUrl = transformIllustUrl(imgPath);
   return new Promise((resolve, reject) => {
-    console.log(`下载中:${illustId}`.gray);
+    console.log(`下载图片中:${illustId}`.gray);
     superagent
       .get(illustUrl)
       // .set('Cookie', cookiesStr)
       .set('Referer', referer)
       .end((err, res) => {
         if (err) {
-          console.log(`下载失败:${illustId}`.yellow);
+          console.log(`下载图片失败:${illustId}`.yellow);
           console.log(err);
         } else {
-          console.log(`下载成功:${illustId}`.green);
+          console.log(`下载图片成功:${illustId}`.green);
           res.body && writeBufferPureImg(res.body, illustId);
         }
       });
   })
 }
 
+/**
+ *
+ * @param {Buffer} buffer
+ * @param {Number | String} id
+ */
 function writeBufferPureImg (buffer, id) {
   const dateFormated = moment().format('YYYY-MM-DD');
   const filename = `${id}_p0.jpg`;
@@ -46,9 +53,13 @@ function writeBufferPureImg (buffer, id) {
     } else {
       console.log(`写入成功:${filenameFull}`.cyan);
     }
-  }) 
+  })
 }
 
+/**
+ *
+ * @param {String} imgPath
+ */
 function spliceIllustIdFormPath (imgPath) {
   const pathList = imgPath.split('/');
   const filename = pathList.pop();
@@ -58,6 +69,18 @@ function spliceIllustIdFormPath (imgPath) {
   };
 }
 
+/**
+ *
+ * @param {String} imgPath
+ */
+function transformIllustUrl (imgPath) {
+  return imgPath.includes(illustUrlPrefix) ? imgPath : `${illustUrlPrefix}${imgPath}`;
+}
+
+/**
+ *
+ * @param {String} path
+ */
 function fsExistsSync (path) {
   try {
     fs.accessSync(path, fs.F_OK);
