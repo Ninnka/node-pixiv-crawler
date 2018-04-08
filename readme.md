@@ -1,6 +1,5 @@
 # pixiv-crawler
 
-> pixiv-crawler 是一个用来爬取pixiv的图片的爬虫
 > pixiv-crawler is a reptile for a website which named pixiv
 
 ## Features
