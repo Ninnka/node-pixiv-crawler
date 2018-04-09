@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const querystring = require('querystring');
 const request = require('superagent');
 const superagent = require('superagent-charset')(request);
 const colors = require('colors');
@@ -8,26 +9,45 @@ const moment = require('moment');
 const referer = 'https://www.pixiv.net/';
 const illustUrlPrefix = 'https://i.pximg.net';
 
+const pathController = require('./pathController');
+
 /**
  *
  * @param {String} imgPath
  */
 function getPureImg (imgPath) {
-  const { illustId, name } = spliceIllustIdFormPath(imgPath);
+  const { illustId, name } = spliceIllustInfoFormPath(imgPath);
   const illustUrl = transformIllustUrl(imgPath);
+  fetchPureImg(illustUrl, name);
+}
+
+/**
+ *
+ * @param {String} imgPath
+ */
+function getPureMangaImg (imgPath) {
+  const { illust_id, page } = spliceParamsFormPath(imgPath);
+  fetchPureImg(imgPath, `${illust_id}_p${page}.jpg`);
+}
+
+/**
+ *
+ * @param {String} illustUrl
+ */
+function fetchPureImg (illustUrl, filename) {
   return new Promise((resolve, reject) => {
-    console.log(`下载图片中:${illustId}`.gray);
+    console.log(`下载图片中:${filename}`.gray);
     superagent
       .get(illustUrl)
       // .set('Cookie', cookiesStr)
       .set('Referer', referer)
       .end((err, res) => {
         if (err) {
-          console.log(`下载图片失败:${illustId}`.yellow);
+          console.log(`下载图片失败:${filename}`.yellow);
           console.log(err);
         } else {
-          console.log(`下载图片成功:${illustId}`.green);
-          res.body && writeBufferPureImg(res.body, illustId);
+          console.log(`下载图片成功:${filename}`.green);
+          res.body && writeBufferPureImg(res.body, filename);
         }
       });
   })
@@ -36,11 +56,11 @@ function getPureImg (imgPath) {
 /**
  *
  * @param {Buffer} buffer
- * @param {Number | String} id
+ * @param {String} filename
  */
-function writeBufferPureImg (buffer, id) {
+function writeBufferPureImg (buffer, filename) {
   const dateFormated = moment().format('YYYY-MM-DD');
-  const filename = `${id}_p0.jpg`;
+  // const filename = `${id}_p0.jpg`;
   const dirPath = path.join(process.cwd(), `${dateFormated} pixiv`);
   if (!fsExistsSync(dirPath)) {
     fs.mkdirSync(`${dateFormated} pixiv`);
@@ -53,20 +73,30 @@ function writeBufferPureImg (buffer, id) {
     } else {
       console.log(`写入成功:${filenameFull}`.cyan);
     }
-  })
+  });
 }
 
 /**
  *
  * @param {String} imgPath
  */
-function spliceIllustIdFormPath (imgPath) {
+function spliceIllustInfoFormPath (imgPath) {
   const pathList = imgPath.split('/');
   const filename = pathList.pop();
   return {
     illustId: filename.split('_')[0],
     name: filename
   };
+}
+
+/**
+ *
+ * @param {String} imgPath
+ */
+function spliceParamsFormPath (imgPath) {
+  const query = imgPath.split('?');
+  const res = querystring.parse(query[1] ? query[1] : '');
+  return res;
 }
 
 /**
@@ -90,4 +120,7 @@ function fsExistsSync (path) {
   return true;
 }
 
-module.exports = getPureImg
+module.exports = {
+  getPureImg,
+  getPureMangaImg,
+}

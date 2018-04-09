@@ -1,18 +1,25 @@
 {
-  "name": "server",
-  "version": "0.0.0",
-  "private": true,
+  "name": "pixiv-crawler",
+  "version": "0.1.0",
+  "main": "index.js",
+  "bin": {
+    "fetchP": "bin/fetchAndParseUrl.js"
+  },
   "scripts": {
-    "dev": "nodemon ./bin/www",
-    "initData": "node ./init/init-data.js",
-    "testPureImg": "node ./init/testPureImg.js",
-    "testFetchAndParseUrl": "node ./init/testFetchAndParseUrl.js"
+    "fetchP": "node bin/fetchAndParseUrl.js"
+  },
+  "author": "Ninnka",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rennzh/node-pixiv-crawler.git"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
-    "cookie-parser": "~1.4.3",
     "cheerio": "^1.0.0-rc.2",
     "colors": "^1.2.1",
+    "commander": "^2.15.1",
+    "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "eventproxy": "^1.0.0",
     "express": "~4.15.2",
