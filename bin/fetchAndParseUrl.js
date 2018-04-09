@@ -23,7 +23,7 @@ if (program.urls) {
   console.log(`参数:${program.ids}`.blue);
   params = program.ids;
 }
-pathController.setOutput(path.resolve(process.cwd(), program.output));
+pathController.setOutput(program.output);
 
 const paramList = params.split(',');
 paramList.forEach((item, index, list) => {

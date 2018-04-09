@@ -61,7 +61,7 @@ function fetchPureImg (illustUrl, filename) {
 function writeBufferPureImg (buffer, filename) {
   let dirPath = '';
   if (pathController.output) {
-    dirPath = pathController.output;
+    dirPath = path.resolve(process.cwd(), pathController.output);
   } else {
     const dateFormated = moment().format('YYYY-MM-DD');
     dirPath = path.join(process.cwd(), `${dateFormated} pixiv`);
