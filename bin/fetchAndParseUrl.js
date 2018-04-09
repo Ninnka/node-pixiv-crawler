@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const path = require('path');
 const program = require('commander');
 const colors = require('colors');
 
@@ -22,7 +23,7 @@ if (program.urls) {
   console.log(`参数:${program.ids}`.blue);
   params = program.ids;
 }
-pathController.setOutput(program.output);
+pathController.setOutput(path.resolve(process.cwd(), program.output));
 
 const paramList = params.split(',');
 paramList.forEach((item, index, list) => {
