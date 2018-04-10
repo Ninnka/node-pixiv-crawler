@@ -60,11 +60,15 @@ function fetchPureImg (illustUrl, filename) {
  * @param {String} filename
  */
 function writeBufferPureImg (buffer, filename) {
-  const dateFormated = moment().format('YYYY-MM-DD');
-  // const filename = `${id}_p0.jpg`;
-  const dirPath = path.join(process.cwd(), `${dateFormated} pixiv`);
+  let dirPath = '';
+  if (pathController.output) {
+    dirPath = path.resolve(process.cwd(), pathController.output);
+  } else {
+    const dateFormated = moment().format('YYYY-MM-DD');
+    dirPath = path.join(process.cwd(), `${dateFormated} pixiv`);
+  }
   if (!fsExistsSync(dirPath)) {
-    fs.mkdirSync(`${dateFormated} pixiv`);
+    fs.mkdirSync(`${dirPath}`);
   }
   const filenameFull = path.join(dirPath, filename);
   fs.writeFile(filenameFull, buffer, (err) => {
