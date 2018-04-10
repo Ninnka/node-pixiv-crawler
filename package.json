@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "main": "index.js",
   "bin": {
-    "fetchP": "bin/fetchAndParseUrl.js"
+    "fetchP": "bin/fetchAndParseUrl.js",
+    "fetchU": "bin/fetchUser.js"
   },
   "scripts": {
-    "fetchP": "node bin/fetchAndParseUrl.js"
+    "fetchP": "node bin/fetchAndParseUrl.js",
+    "fetchU": "node bin/fetchUser.js"
   },
   "author": "Ninnka",
   "license": "MIT",

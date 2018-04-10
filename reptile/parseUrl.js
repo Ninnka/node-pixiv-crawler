@@ -20,6 +20,7 @@ function fetchMediumUrl (mediumUrl) {
     superagent
       .get(mediumUrl)
       .set('Cookie', Cookie.cookiesStr)
+      .timeout(25 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载网页失败:${mediumUrl}`.yellow);
@@ -69,6 +70,7 @@ function fetchMultipleHref (multipleHref) {
     superagent
       .get(multipleHref)
       .set('Cookie', Cookie.cookiesStr)
+      .timeout(25 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载图片列表网页失败:${multipleHref}`.yellow);
@@ -104,6 +106,7 @@ function fetchPureMangaPage (imgHref) {
     superagent
       .get(imgHref)
       .set('Cookie', Cookie.cookiesStr)
+      .timeout(25 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载图片网页失败:${imgHref}`.yellow);
