@@ -41,7 +41,7 @@ function fetchPureImg (illustUrl, filename) {
       .get(illustUrl)
       // .set('Cookie', cookiesStr)
       .set('Referer', referer)
-      .timeout(25 * 1000)
+      .timeout(50 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载图片失败:${filename}`.yellow);

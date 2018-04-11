@@ -6,7 +6,7 @@ const colors = require('colors');
 
 const parseUrl = require('../reptile/parseUrl');
 
-const pathController = require('../reptile/pathController');
+const pathController = require('../reptile/PathController');
 
 program
   .version('pixiv-crawler v0.1.0', '-v, --version')
