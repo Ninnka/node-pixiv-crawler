@@ -6,7 +6,7 @@ const colors = require('colors');
 
 const Cookie = require('../utils/cookies');
 const pureImg = require('./getPureImg');
-const pathController = require('./pathController');
+const pathController = require('./PathController');
 
 const urlPrefix = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id=';
 

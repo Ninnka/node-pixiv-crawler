@@ -9,7 +9,7 @@ const moment = require('moment');
 const referer = 'https://www.pixiv.net/';
 const illustUrlPrefix = 'https://i.pximg.net';
 
-const pathController = require('./pathController');
+const pathController = require('./PathController');
 
 /**
  *

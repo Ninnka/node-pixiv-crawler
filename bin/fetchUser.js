@@ -28,7 +28,6 @@ if (program.urls) {
   console.log(`参数:${program.ids}`.blue);
   params = program.ids;
 }
-
 pathController.setOutput(program.output);
 
 userController.setCount(program.count);
