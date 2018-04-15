@@ -33,7 +33,7 @@ function setUserUrlPage (prefix, page) {
 
 function checkNextPageStatus (currentPage) {
   if (userController.page ||
-    userController.count == userController.counted||
+    userController.count === userController.counted ||
     currentPage === userController.totalPage ||
     currentPage === userController.finish) {
     return false;
@@ -49,9 +49,10 @@ async function getUserUrl (params) {
   const { userKeyword, workType } = params;
   let page = 1;
   if (userController.page) {
-    page = userController.page;
+    page = Number(userController.page);
   } else if (userController.start) {
-    page = userController.start;
+    console.log('Number(userController.start)', Number(userController.start));
+    page = Number(userController.start);
   }
 
   for (;;) {
@@ -65,7 +66,7 @@ async function getUserUrl (params) {
       await fetchUserUrl(userUrl);
       const nextPageStatus = checkNextPageStatus(page);
       if (nextPageStatus) {
-        page += 1;
+        page = Number(page) + 1;
       } else {
         break;
       }
@@ -126,7 +127,7 @@ function parseUserPage (pageContent) {
     const $ = cheerio.load(pageContent);
 
     // * 剩余数量（如果设置了爬取图片的数量限制）
-    let remainItems = userController.count !== '' ? userController.remainItems() : '';
+    let remainItems = userController.count ? userController.remainItems() : '';
 
     // * 保存用户名
     if (!userController.userName) {
@@ -160,6 +161,10 @@ function parseUserPage (pageContent) {
         type: 'parseUserPage'
       })
     } else {
+      resolve({
+        code: 0,
+        type: 'parseUserPage'
+      })
       console.log('此页面没有数据'.yellow);
     }
   });

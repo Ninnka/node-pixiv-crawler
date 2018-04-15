@@ -7,6 +7,7 @@ const colors = require('colors');
 const Cookie = require('../utils/cookies');
 const pureImg = require('./getPureImg');
 const pathController = require('./PathController');
+const userController = require('./UserController');
 
 const urlPrefix = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id=';
 
@@ -14,17 +15,23 @@ const urlPrefix = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id
  * 解析传入的url
  * @param {String} mediumUrl
  */
-function fetchMediumUrl (mediumUrl) {
+function fetchMediumUrl (mediumUrl, pageAttemptTimes = 0) {
   mediumUrl = transformMediumUrl(String(mediumUrl));
   return new Promise((resolve, reject) => {
     superagent
       .get(mediumUrl)
       .set('Cookie', Cookie.cookiesStr)
-      .timeout(50 * 1000)
+      .timeout(60 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载网页失败:${mediumUrl}`.yellow);
           console.log(err);
+          // * 重新连接下载
+          if (pageAttemptTimes < userController.pageAttemptTimes) {
+            const newAttempt = pageAttemptTimes + 1;
+            console.log(`重连次数${newAttempt}`.yellow.bgWhite);
+            fetchMediumUrl(mediumUrl, newAttempt);
+          }
         } else {
           console.log(`下载网页成功:${mediumUrl}`.green);
           res.res && res.res.text && parseMediumPage(res.res.text);
@@ -68,17 +75,23 @@ function parseMediumPage (pageContent) {
  *
  * @param {String} multipleHref
  */
-function fetchMultipleHref (multipleHref) {
+function fetchMultipleHref (multipleHref, pageAttemptTimes = 0) {
   multipleHref = pathController.baseUrl + multipleHref;
   return new Promise((resolve, reject) => {
     superagent
       .get(multipleHref)
       .set('Cookie', Cookie.cookiesStr)
-      .timeout(50 * 1000)
+      .timeout(60 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载图片列表网页失败:${multipleHref}`.yellow);
           console.log(err);
+          // * 重新连接下载
+          if (pageAttemptTimes < userController.pageAttemptTimes) {
+            const newAttempt = pageAttemptTimes + 1;
+            console.log(`重连次数${newAttempt}`.yellow.bgWhite);
+            fetchMultipleHref(multipleHref, newAttempt);
+          }
         } else {
           console.log(`下载图片列表网页成功:${multipleHref}`.green);
           res.res && res.res.text && parseMultipleContent(res.res.text);
@@ -105,16 +118,22 @@ function parseMultipleContent (pageContent) {
  *
  * @param {String} imgHref
  */
-function fetchPureMangaPage (imgHref) {
+function fetchPureMangaPage (imgHref, pageAttemptTimes = 0) {
   return new Promise((resolve, reject) => {
     superagent
       .get(imgHref)
       .set('Cookie', Cookie.cookiesStr)
-      .timeout(50 * 1000)
+      .timeout(60 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载图片网页失败:${imgHref}`.yellow);
           console.log(err);
+          // * 重新连接下载
+          if (pageAttemptTimes < userController.pageAttemptTimes) {
+            const newAttempt = pageAttemptTimes + 1;
+            console.log(`重连次数${newAttempt}`.yellow.bgWhite);
+            fetchPureMangaPage(imgHref, newAttempt);
+          }
         } else {
           console.log(`下载图片网页成功:${imgHref}`.green);
           res.res && res.res.text && parsePureMangaImg(res.res.text);

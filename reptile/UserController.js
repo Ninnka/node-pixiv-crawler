@@ -16,6 +16,7 @@ class UserController {
     this.totalPage = '';
     this.counted = 0;
     this.attemptTimes = 5;
+    this.pageAttemptTimes = 5;
   }
 
   setCount (count = '') {
@@ -52,6 +53,10 @@ class UserController {
 
   setAttemptTimes (attemptTimes = 5) {
     this.attemptTimes = attemptTimes;
+  }
+
+  setPageAttemptTimes (pageAttemptTimes = 5) {
+    this.pageAttemptTimes = pageAttemptTimes;
   }
 
   remainItems () {

@@ -15,8 +15,8 @@ program
   .option('-t, --type [work_type]', 'Set the [work_type] which for crawling, optionals: 1.illust; 2.bookmark. default: illust', 'illust')
   .option('-c, --count [count_limit]', 'Set the crawled picture [count_limit]', '')
   .option('-p, --page [page_limit]', 'Set the crawled picture [page]_limit]' , '')
-  .option('-stp, --start [start_page]', 'Set the [start_page]', '')
-  .option('-fip, --finish [finish_page]', 'Set the [finish_page]', '')
+  .option('-s, --start [start_page]', 'Set the [start_page]', '')
+  .option('-f, --finish [finish_page]', 'Set the [finish_page]', '')
   .option('-o, --output [output_path]', 'Set the img [output_path]', '')
   .parse(process.argv);
 
@@ -30,10 +30,10 @@ if (program.urls) {
 }
 pathController.setOutput(program.output);
 
-userController.setCount(program.count);
-userController.setStartPage(program.start);
-userController.setFinishPage(program.finish);
-userController.setPage(program.page);
+userController.setCount(Number(program.count));
+userController.setStartPage(Number(program.start));
+userController.setFinishPage(Number(program.finish));
+userController.setPage(Number(program.page));
 
 const paramList = params.split(',');
 paramList.forEach((item, index, list) => {

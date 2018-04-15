@@ -10,6 +10,7 @@ const referer = 'https://www.pixiv.net/';
 const illustUrlPrefix = 'https://i.pximg.net';
 
 const pathController = require('./PathController');
+const userController = require('./UserController');
 
 /**
  *
@@ -34,18 +35,24 @@ function getPureMangaImg (imgPath) {
  *
  * @param {String} illustUrl
  */
-function fetchPureImg (illustUrl, filename) {
+function fetchPureImg (illustUrl, filename, pageAttemptTimes = 0) {
   return new Promise((resolve, reject) => {
     console.log(`下载图片中:${filename}`.gray);
     superagent
       .get(illustUrl)
       // .set('Cookie', cookiesStr)
       .set('Referer', referer)
-      .timeout(50 * 1000)
+      .timeout(60 * 1000)
       .end((err, res) => {
         if (err) {
           console.log(`下载图片失败:${filename}`.yellow);
           console.log(err);
+          // * 重新连接下载
+          if (pageAttemptTimes < userController.pageAttemptTimes) {
+            const newAttempt = pageAttemptTimes + 1;
+            console.log(`重连次数${newAttempt}`.yellow.bgWhite);
+            fetchPureImg(illustUrl, filename, newAttempt);
+          }
         } else {
           console.log(`下载图片成功:${filename}`.green);
           res.body && writeBufferPureImg(res.body, filename);
