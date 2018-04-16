@@ -17,6 +17,8 @@ class UserController {
     this.counted = 0;
     this.attemptTimes = 5;
     this.pageAttemptTimes = 5;
+    this.cFilenamePrefix = '';
+    this.cFilenameSuffix = '';
   }
 
   setCount (count = '') {
@@ -57,6 +59,17 @@ class UserController {
 
   setPageAttemptTimes (pageAttemptTimes = 5) {
     this.pageAttemptTimes = pageAttemptTimes;
+  }
+
+  setCfilename (cFilename = '') {
+    if (cFilename !== '') {
+      const regexpPrefix = /.*(?=\{fn\})/g;
+      let resPrefix = regexpPrefix.exec(cFilename);
+      const regexpSuffix = /(?<=\{fn\}).*/g;
+      let resSuffix = regexpSuffix.exec(cFilename);
+      this.cFilenamePrefix = resPrefix[0];
+      this.cFilenameSuffix = resSuffix[0];
+    }
   }
 
   remainItems () {

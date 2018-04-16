@@ -18,6 +18,7 @@ program
   .option('-s, --start [start_page]', 'Set the [start_page]', '')
   .option('-f, --finish [finish_page]', 'Set the [finish_page]', '')
   .option('-o, --output [output_path]', 'Set the img [output_path]', '')
+  .option('-n, --file-name [file_name]', 'Custom [file_name]', '')
   .parse(process.argv);
 
 let params = '';
@@ -34,6 +35,7 @@ userController.setCount(Number(program.count));
 userController.setStartPage(Number(program.start));
 userController.setFinishPage(Number(program.finish));
 userController.setPage(Number(program.page));
+userController.setCfilename(program.fileName);
 
 const paramList = params.split(',');
 paramList.forEach((item, index, list) => {

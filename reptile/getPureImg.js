@@ -77,6 +77,8 @@ function writeBufferPureImg (buffer, filename) {
   if (!fsExistsSync(dirPath)) {
     fs.mkdirSync(`${dirPath}`);
   }
+  const filenameList = filename.split('.');
+  filename = userController.cFilenamePrefix + filenameList[0] + userController.cFilenameSuffix + filenameList[1];
   const filenameFull = path.join(dirPath, filename);
   fs.writeFile(filenameFull, buffer, (err) => {
     if (err) {
