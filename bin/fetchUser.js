@@ -9,7 +9,7 @@ const pathController = require('../reptile/PathController');
 const userController = require('../reptile/UserController');
 
 program
-  .version('pixiv-crawler v0.1.0', '-v, --version')
+  .version('pixiv-crawler v0.4.1', '-v, --version')
   .option('-u, --urls [address]', 'Set the url [address] for img', '')
   .option('-i, --ids [illust_id]', 'Set the [illust_id] which belong to img', '')
   .option('-t, --type [work_type]', 'Set the [work_type] which for crawling, optionals: 1.illust; 2.bookmark. default: illust', 'illust')

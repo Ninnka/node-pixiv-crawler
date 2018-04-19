@@ -10,7 +10,7 @@ const pathController = require('../reptile/PathController');
 const userController = require('../reptile/UserController');
 
 program
-  .version('pixiv-crawler v0.1.0', '-v, --version')
+  .version('pixiv-crawler v0.4.1', '-v, --version')
   .option('-u, --urls [address]', 'Set the url [address] for img', '')
   .option('-i, --ids [illust_id]', 'Set the [illust_id] which belong to img', '')
   .option('-o, --output [output_path]', 'Set the img [output_path]', '')
