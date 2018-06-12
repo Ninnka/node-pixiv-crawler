@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
-const path = require('path');
 const program = require('commander');
 const colors = require('colors');
-
 const parseUrl = require('../reptile/parseUrl');
 
 const pathController = require('../reptile/PathController');
@@ -19,20 +17,41 @@ program
 
 let params = '';
 if (program.urls) {
-  console.log(`参数:${program.urls}`.blue);
+  // console.log(`参数:${program.urls}`.blue);
   params = program.urls;
 } else if (program.ids) {
-  console.log(`参数:${program.ids}`.blue);
+  // console.log(`参数:${program.ids}`.blue);
   params = program.ids;
 }
 pathController.setOutput(program.output);
 userController.setCfilename(program.fileName);
 
 const paramList = params.split(',');
-paramList.forEach((item, index, list) => {
+let targetPList = [];
+paramList.forEach((item) => {
   if (item) {
-    parseUrl.fetchMediumUrl(item.trim());
+    const res = parseUrl.fetchMediumUrl(item.trim());
+    targetPList.push(res);
   } else {
     console.log('url或id不能为空'.red);
   }
 });
+
+Promise.all(targetPList)
+  .then(async (res) => {
+    finishProcess();
+  })
+  .catch(err => {
+    console.log('paramList forEach Promise all catch err', err);
+    finishProcess();
+  });
+
+async function finishProcess () {
+  try {
+    await userController.closeBrowser();
+  } catch (err) {
+    console.log('closeBrowser catch err', err);
+  } finally {
+    process.exit(0);
+  }
+}

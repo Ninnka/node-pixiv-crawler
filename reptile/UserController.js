@@ -1,3 +1,4 @@
+const ora = require('ora');
 class UserController {
 
   constructor (params = {
@@ -7,6 +8,9 @@ class UserController {
     page: ''
   }) {
     const { count, start, finish, page } = params;
+    this.browser = null;
+    this.maxConcurrency = 8;
+    this.currConcurrency = 0;
     this.count = count;
     this.start = start;
     this.finish = finish;
@@ -19,6 +23,24 @@ class UserController {
     this.pageAttemptTimes = 5;
     this.cFilenamePrefix = '';
     this.cFilenameSuffix = '';
+    this.spinner = ora('');
+  }
+
+  closeBrowser () {
+    return new Promise(async (resolve, reject) => {
+      if (this.browser) {
+        try {
+          await this.browser.close();
+          resolve();
+        } catch (err) {
+          resolve();
+        }
+      }
+    });
+  }
+
+  setBrowser (browser = '') {
+    this.browser = browser;
   }
 
   setCount (count = '') {

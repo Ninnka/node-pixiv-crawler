@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 function cookiesStringTransform (params) {
   const entries = Object.entries(params);
   let res = '';
@@ -8,33 +10,201 @@ function cookiesStringTransform (params) {
 }
 
 const cookiesObj = {
-  PHPSESSID: '4262444_838cdd5f577b2c2bd3525335b8020677',
-  __cfduid: 'd4036ffbd07f3e753b3290ce6e3b3a7ee1523170351',
-  __utma: '235335808.454134352.1521441271.1523170327.1523170327.1',
-  __utmb: '235335808.3.10.1523170327',
-  __utmc: '235335808',
-  __utmt: '1',
-  __utmv: '235335808.|2=login%20ever=yes=1^3=plan=normal=1^5=gender=male=1^6=user_id=4262444=1^9=p_ab_id=6=1^10=p_ab_id_2=8=1^11=lang=zh=1',
-  __utmz: '235335808.1523170327.1.1.utmcsr=accounts.pixiv.net|utmccn=(referral)|utmcmd=referral|utmcct=/login',
-  _ga: 'GA1.2.454134352.1521441271',
-  _gid: 'GA1.2.97208334.1523170274',
-  a_type: '0',
-  b_type: '1',
-  c_type: '23',
-  device_token: '8991da2eec7d5b2040db59a8a1f877cc',
-  is_sensei_service_user: '1',
-  login_bc: '1',
-  login_ever: 'yes',
-  module_orders_mypage: '%5B%7B%22name%22%3A%22sketch_live%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22tag_follow%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22recommended_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22showcase%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22everyone_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22following_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22mypixiv_new_illusts%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22fanbox%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22featured_tags%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22contests%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22user_events%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22sensei_courses%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22spotlight%22%2C%22visible%22%3Atrue%7D%2C%7B%22name%22%3A%22booth_follow_items%22%2C%22visible%22%3Atrue%7D%5D',
-  p_ab_id: '6',
-  p_ab_id_2: '8',
-  tag_view_ranking: 'eYrgnBd8yx~KgtLZpp18O~-HFtqPPU12~kxSeeOQL7R'
+  PHPSESSID: {
+    value: '4262444_507af7c75ea59151f047c68fcfc89507',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2018-07-12T06:19:27.371Z',
+    httpOnly: true,
+    secure: true,
+  },
+  __juicer_jid_9i3nsdfP_: {
+    value: '',
+    domain: '.booth.pm',
+    path: '/',
+    expires: '2038-01-19T03:14:07.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  __juicer_uid_9i3nsdfP_: {
+    value: '73b2859f7966134daa40dee9d0d08687c1c21b09',
+    domain: '.booth.pm',
+    path: '/',
+    expires: '2038-01-19T03:14:07.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  __utma: {
+    value: '235335808.1760922969.1508658602.1520957397.1521271220.60',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2020-03-16T07:20:20.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  // __utmb: '235335808.3.10.1523170327',
+  // __utmc: '235335808',
+  // __utmt: '1',
+  __utmv: {
+    value: '235335808.|2=login%20ever=yes=1^3=plan=normal=1^5=gender=male=1^6=user_id=4262444=1^9=p_ab_id=9=1^10=p_ab_id_2=6=1^11=lang=zh=1',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2020-03-16T07:20:20.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  __utmz: {
+    value: '235335808.1521271220.60.22.utmcsr=youtube.com|utmccn=(referral)|utmcmd=referral|utmcct=/',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2018-09-15T19:20:20.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  _ga_b: {
+    name: '_ga',
+    value: 'GA1.2.628467667.1508658806',
+    domain: '.booth.pm',
+    path: '/',
+    expires: '2019-12-08T14:24:33.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  _ga_p: {
+    name: '_ga',
+    value: 'GA1.2.1760922969.1508658602',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2019-12-08T14:24:33.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  _td: {
+    name: '_td_b',
+    value: '2a103784-cd0d-43e5-98c4-ac69418e619f',
+    domain: '.booth.pm',
+    path: '/',
+    expires: '2019-10-22T07:53:29.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  _td: {
+    name: '_td_p',
+    value: '13b1a019-4e63-4b38-d02b-fe2e0a9c16c5',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2020-03-05T15:41:09.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  _tdim: {
+    value: 'a471ea9c-bbfc-45de-d760-773ee7cc682a',
+    domain: 'www.pixiv.net',
+    path: '/',
+    expires: '2019-03-06T15:41:09.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  a_type: {
+    value: '0',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2020-06-11T06:19:27.370Z',
+    httpOnly: false,
+    secure: false,
+  },
+  b_type: {
+    value: '1',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2020-06-11T06:19:27.370Z',
+    httpOnly: false,
+    secure: false,
+  },
+  c_type: {
+    value: '23',
+    domain: '.pixiv.net',
+    path: '/',
+    expires: '2020-06-11T07:20:53.849Z',
+    httpOnly: false,
+    secure: false,
+  },
+  login_ever: {
+    value: '1',
+    domain: '.www.pixiv.net',
+    path: '/',
+    expires: '2022-10-21T07:50:10.000Z',
+    httpOnly: false,
+    secure: false,
+  },
+  p_ab_id: {
+    value: '9',
+    domain: '.www.pixiv.net',
+    path: '/',
+    expires: '2022-10-21T07:49:50.982Z',
+    httpOnly: false,
+    secure: false,
+  },
+  p_ab_id_2: {
+    value: '6',
+    domain: '.www.pixiv.net',
+    path: '/',
+    expires: '2022-10-21T07:49:50.982Z',
+    httpOnly: false,
+    secure: false,
+  },
+  p_ab_id_2: {
+    value: '0',
+    domain: '.www.pixiv.net',
+    path: '/',
+    expires: '2020-05-31T10:28:22.163Z',
+    httpOnly: false,
+    secure: false,
+  },
+  yuid: {
+    value: '0',
+    domain: 'www.pixiv.net',
+    path: '/',
+    expires: '2020-04-18T14:45:19.165Z',
+    httpOnly: false,
+    secure: false,
+  },
 };
 
 const cookiesStr = cookiesStringTransform(cookiesObj);
+
+async function setCookie (page) {
+  const cookies = Object.entries(cookiesObj);
+  let targetPros = [];
+  return new Promise(async (resolve, reject) => {
+    for (cookie of cookies) {
+      let name = cookie[1].name ? cookie[1].name : cookie[0];
+      let expires = moment(cookie[1].expires).unix();
+      const data = {
+        ...cookie[1],
+        name,
+        expires
+      };
+      try {
+        targetPros.push(page.setCookie(data));
+      } catch (err) {
+        console.log('setCookie err', err);
+      }
+    }
+    Promise.all(targetPros)
+      .then(res => {
+        resolve(page);
+      })
+      .catch(err => {
+        console.log('setCookie promise all catch err', err);
+        reject();
+      });
+  });
+}
 
 module.exports = {
   cookiesStringTransform,
   cookiesObj,
   cookiesStr,
+  setCookie,
 };
