@@ -4,7 +4,7 @@ function cookiesStringTransform (params) {
   const entries = Object.entries(params);
   let res = '';
   entries.forEach(element => {
-    res = res + ` ${element[0]}=${element[1]};`
+    res = res + ` ${element[0]}=${element[1].value};`
   });
   return res.trim();
 }

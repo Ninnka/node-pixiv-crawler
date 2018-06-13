@@ -2,6 +2,8 @@
 
 const program = require('commander');
 const colors = require('colors');
+const puppeteer = require('puppeteer');
+
 const parseUrl = require('../reptile/parseUrl');
 
 const pathController = require('../reptile/PathController');
@@ -26,26 +28,6 @@ if (program.urls) {
 pathController.setOutput(program.output);
 userController.setCfilename(program.fileName);
 
-const paramList = params.split(',');
-let targetPList = [];
-paramList.forEach((item) => {
-  if (item) {
-    const res = parseUrl.fetchMediumUrl(item.trim());
-    targetPList.push(res);
-  } else {
-    console.log('url或id不能为空'.red);
-  }
-});
-
-Promise.all(targetPList)
-  .then(async (res) => {
-    finishProcess();
-  })
-  .catch(err => {
-    console.log('paramList forEach Promise all catch err', err);
-    finishProcess();
-  });
-
 async function finishProcess () {
   try {
     await userController.closeBrowser();
@@ -55,3 +37,45 @@ async function finishProcess () {
     process.exit(0);
   }
 }
+
+async function initBrowser () {
+  return new Promise(async (resolve) => {
+    try {
+      let browser = null;
+      if (!userController.browser) {
+        browser = await puppeteer.launch();
+        userController.setBrowser(browser);
+      }
+      resolve();
+    } catch (err) {
+      resolve();
+      console.error('launch browser failed');
+      process.exit(0);
+    }
+  });
+}
+
+async function FetchingData () {
+  await initBrowser();
+  const paramList = params.split(',');
+  let targetPList = [];
+  paramList.forEach((item) => {
+    if (item) {
+      const res = parseUrl.fetchMediumUrl(item.trim());
+      targetPList.push(res);
+    } else {
+      console.log('url或id不能为空'.red);
+    }
+  });
+
+  Promise.all(targetPList)
+    .then(async (res) => {
+      finishProcess();
+    })
+    .catch(err => {
+      console.log('paramList forEach Promise all catch err', err);
+      finishProcess();
+    });
+}
+
+FetchingData();

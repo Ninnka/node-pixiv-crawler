@@ -2,6 +2,7 @@
 
 const program = require('commander');
 const colors = require('colors');
+const puppeteer = require('puppeteer');
 
 const parseUserUrl = require('../reptile/parseUserUrl');
 
@@ -23,10 +24,10 @@ program
 
 let params = '';
 if (program.urls) {
-  console.log(`参数:${program.urls}`.blue);
+  // console.log(`参数:${program.urls}`.blue);
   params = program.urls;
 } else if (program.ids) {
-  console.log(`参数:${program.ids}`.blue);
+  // console.log(`参数:${program.ids}`.blue);
   params = program.ids;
 }
 pathController.setOutput(program.output);
@@ -37,14 +38,56 @@ userController.setFinishPage(Number(program.finish));
 userController.setPage(Number(program.page));
 userController.setCfilename(program.fileName);
 
-const paramList = params.split(',');
-paramList.forEach((item, index, list) => {
-  if (item) {
-    parseUserUrl.getUserUrl({
-      userKeyword: item.trim(),
-      workType: program.type
-    });
-  } else {
-    console.log('url或id不能为空'.red);
+async function finishProcess () {
+  try {
+    await userController.closeBrowser();
+  } catch (err) {
+    console.log('closeBrowser catch err', err);
+  } finally {
+    process.exit(0);
   }
-});
+}
+
+async function initBrowser () {
+  return new Promise(async (resolve) => {
+    try {
+      let browser = null;
+      if (!userController.browser) {
+        browser = await puppeteer.launch();
+        userController.setBrowser(browser);
+      }
+      resolve();
+    } catch (err) {
+      resolve();
+      console.error('launch browser failed');
+      process.exit(0);
+    }
+  });
+}
+
+async function FetchingData () {
+  await initBrowser();
+  const paramList = params.split(',');
+  let targetPList = [];
+  paramList.forEach((item, index, list) => {
+    if (item) {
+      targetPList.push(parseUserUrl.getUserUrl({
+        userKeyword: item.trim(),
+        workType: program.type
+      }));
+    } else {
+      console.log('url或id不能为空'.red);
+    }
+  });
+
+  Promise.all(targetPList)
+    .then(async (res) => {
+      finishProcess();
+    })
+    .catch(err => {
+      console.log('paramList forEach Promise all catch err', err);
+      finishProcess();
+    });
+}
+
+FetchingData();

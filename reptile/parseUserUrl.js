@@ -46,84 +46,116 @@ function checkNextPageStatus (currentPage) {
  * @param {Object} params
  */
 async function getUserUrl (params) {
-  const { userKeyword, workType } = params;
-  let page = 1;
-  if (userController.page) {
-    page = Number(userController.page);
-  } else if (userController.start) {
-    console.log('Number(userController.start)', Number(userController.start));
-    page = Number(userController.start);
-  }
+  return new Promise(async (resolve) => {
+    const { userKeyword, workType } = params;
+    let page = 1;
+    if (userController.page) {
+      page = Number(userController.page);
+    } else if (userController.start) {
+      console.log('Number(userController.start)', Number(userController.start));
+      page = Number(userController.start);
+    }
 
-  for (;;) {
-    let userUrl = '';
-    if (workType === 'illust') {
-      userUrl = `${userUrlPrefix}&id=${userKeyword}&p=${page}`;
-    } else if (workType === 'bookmark') {
-      userUrl = `${userBookmarkPrefix}&id=${userKeyword}&p=${page}`;
-    }
-    if (userUrl) {
-      await fetchUserUrl(userUrl);
-      const nextPageStatus = checkNextPageStatus(page);
-      if (nextPageStatus) {
-        page = Number(page) + 1;
-      } else {
-        break;
+    try {
+      for (;;) {
+        let userUrl = '';
+        if (workType === 'illust') {
+          userUrl = `${userUrlPrefix}&id=${userKeyword}&p=${page}`;
+        } else if (workType === 'bookmark') {
+          userUrl = `${userBookmarkPrefix}&id=${userKeyword}&p=${page}`;
+        }
+        if (userUrl) {
+          await fetchUserUrl(userUrl);
+          const nextPageStatus = checkNextPageStatus(page);
+          if (nextPageStatus) {
+            page = Number(page) + 1;
+          } else {
+            break;
+          }
+        } else {
+          console.log('生成用户的地址失败'.red);
+        }
       }
-    } else {
-      console.log('生成用户的地址失败'.red);
+    } catch (err) {
+      console.log('catch error in getUserUrl');
+    } finally {
+      resolve();
     }
-  }
+  });
 }
 
 /**
  *
  * @param {String} userUrl
  */
-function fetchUserUrl (userUrl, attemptTimes = 0) {
-  return new Promise((resolve, reject) => {
+async function fetchUserUrl (userUrl, attemptTimes = 0) {
+  return new Promise(async (resolve, reject) => {
+    userController.spinner.stop();
+    userController.spinner.color = 'yellow';
+    userController.spinner.text = '获取页面中...';
+    userController.spinner.start();
     superagent
       .get(userUrl)
       .set('Cookie', Cookie.cookiesStr)
       .timeout(60 * 1000)
       .end(async (err, res) => {
         if (err) {
-          console.log(`下载网页失败:${userUrl}`.yellow);
-          console.log(err);
-          console.log(`准备重新下载`.yellow);
+          // console.log('fetchUserUrl err', err);
+          // console.log(`下载网页失败:${userUrl}`.yellow);
+          // console.log(`准备重新下载`.yellow);
+          userController.spinner.text = `获取网页失败，准备重新下载:${userUrl}`.red;
+          userController.spinner.fail();
           // * 重新连接下载
-          if (attemptTimes < userController.attemptTimes) {
-            const newAttempt = attemptTimes + 1;
-            console.log(`重连次数${newAttempt}`.yellow.bgWhite);
-            fetchUserUrl(userUrl, newAttempt);
-          }
-          // reject({
-          //   cmsg: '[fetchUserUrl catch err]',
-          //   body: err,
-          // });
-        } else {
-          console.log(`下载网页成功:${userUrl}`.green);
-          if (res.res && res.res.text) {
-            try {
-              const upres = await parseUserPage(res.res.text);
-              upres.code === 0 && resolve();
-            } catch (err) {
-              console.log('[fetchUserUrl catch err]', err);
+          try {
+            if (attemptTimes < userController.attemptTimes) {
+              const newAttempt = attemptTimes + 1;
+              console.log('--------');
+              console.log(`重连${mediumUrl}`.yellow.bgBlack);
+              console.log(`次数${newAttempt}`.yellow.bgBlack);
+              console.log('--------');
+              resolve(await fetchUserUrl(userUrl, newAttempt));
             }
+          } catch (err) {
+          } finally {
+            resolve();
+          }
+        } else {
+          // console.log(`下载网页成功:${userUrl}`.green);
+          userController.spinner.text = `获取网页成功:${userUrl}`.green;
+          userController.spinner.succeed();
+          try {
+            if (res.res && res.res.text) {
+              // const upres =
+              await parseUserPage(res.res.text, userUrl);
+              // upres.code === 0 && resolve();
+            } else {
+              userController.spinner.text = `无网页数据:${userUrl}`.yellow;
+              userController.spinner.fail();
+            }
+          } catch (err) {
+            console.log('[fetchUserUrl catch err]', err);
+          } finally {
+            resolve();
           }
         }
       });
-  }).then((res) => {}).catch((err) => {
-    console.log(`${err.cmsg}`.red);
   });
+  // .then((res) => {}).catch((err) => {
+  //   console.log(`${err.cmsg}`.red);
+  // });
 }
 
 /**
  *
  * @param {String} pageContent
+ * @param {String} userUrl
  */
-function parseUserPage (pageContent) {
+async function parseUserPage (pageContent, userUrl) {
   return new Promise(async (resolve, reject) => {
+    userController.spinner.stop();
+    userController.spinner.color = 'yellow';
+    userController.spinner.text = `解析页面数据中...`;
+    userController.spinner.start();
     const $ = cheerio.load(pageContent);
 
     // * 剩余数量（如果设置了爬取图片的数量限制）
@@ -152,20 +184,28 @@ function parseUserPage (pageContent) {
         itemsLen = itemsLen > remainItems ? remainItems : itemsLen;
         userController.setCounted(userController.counted + itemsLen);
       }
+      userController.spinner.text = `解析页面数据成功，找到图片链接`;
+      userController.spinner.succeed();
+      let targetPList = [];
       for (let i = 0; i < itemsLen; i++) {
         const imgHref = _imageItems$.eq(i).attr('href');
-        imgHref && parseUrl.fetchMediumUrl(pathController.baseUrl + imgHref.replace(/^\//, ''));
+        if (imgHref) {
+          targetPList.push(parseUrl.fetchMediumUrl(pathController.baseUrl + imgHref.replace(/^\//, '')));
+        }
       }
-      resolve({
-        code: 0,
-        type: 'parseUserPage'
-      })
+
+      Promise.all(targetPList)
+        .then(res => {
+          resolve();
+        })
+        .catch(err => {
+          resolve();
+        });
     } else {
-      resolve({
-        code: 0,
-        type: 'parseUserPage'
-      })
-      console.log('此页面没有数据'.yellow);
+      userController.spinner.text = `解析页面数据成功，此页面没有图片数据: ${userUrl}`.yellow;
+      userController.spinner.warn();
+      resolve();
+      // console.log('此页面没有数据'.yellow);
     }
   });
 }

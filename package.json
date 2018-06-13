@@ -1,6 +1,6 @@
 {
   "name": "pixiv-crawler",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "main": "index.js",
   "bin": {
     "crawlP": "bin/fetchAndParseUrl.js",
@@ -23,8 +23,6 @@
     "commander": "^2.15.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
-    "eventproxy": "^1.0.0",
-    "express": "~4.15.2",
     "jade": "~1.11.0",
     "moment": "^2.22.2",
     "morgan": "~1.8.1",
