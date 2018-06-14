@@ -17,13 +17,14 @@ const urlPrefix = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id
 async function fetchMediumUrl (mediumUrl, pageAttemptTimes = 0) {
   mediumUrl = transformMediumUrl(String(mediumUrl));
   return new Promise(async (resolve, reject) => {
+    let page = null;
     try {
       let browser = null;
       if (!userController.browser) {
         browser = await puppeteer.launch();
         userController.setBrowser(browser);
       }
-      let page = await userController.browser.newPage();
+      page = await userController.browser.newPage();
       const cookies = await page.cookies(mediumUrl);
       if (cookies.length <= 0) {
         page = await Cookie.setCookie(page);
@@ -40,9 +41,9 @@ async function fetchMediumUrl (mediumUrl, pageAttemptTimes = 0) {
         const content = await page.content();
         try {
           await parseMediumPage(content);
-          resolve();
+          // resolve();
         } catch (err) {
-          resolve();
+          // resolve();
         }
       } catch (err) {
         userController.spinner.text = '进入页面失败';
@@ -58,12 +59,14 @@ async function fetchMediumUrl (mediumUrl, pageAttemptTimes = 0) {
           resolve(await fetchMediumUrl(mediumUrl, newAttempt));
         } else {
           console.log(`跳转到目标页面失败:${mediumUrl}`.yellow);
-          await page.close();
-          resolve();
+          // resolve();
         }
       }
     } catch (err) {
       console.log('[async fetchMediumUrl catch err in promise]', err);
+      // resolve();
+    } finally {
+      page && !page.isClosed() && await page.close();
       resolve();
     }
   });
@@ -94,7 +97,6 @@ async function parseMediumPage (pageContent) {
     const _illust_modal$ = $('div[role=presentation] > a');
 
     if (_illust_modal$) {
-      // * 图源不是multiple的情况
       try {
         const dataSrc = _illust_modal$.attr('href');
         if (dataSrc && dataSrc.includes('http')) {
@@ -127,13 +129,14 @@ async function parseMediumPage (pageContent) {
 async function fetchMultipleHref (multipleHref, pageAttemptTimes = 0) {
   multipleHref = pathController.baseUrl.replace(/\/$/, '') + multipleHref;
   return new Promise(async (resolve, reject) => {
+    let page = null;
     try {
       let browser = null;
       if (!userController.browser) {
         browser = await puppeteer.launch();
         userController.setBrowser(browser);
       }
-      let page = await userController.browser.newPage();
+      page = await userController.browser.newPage();
       const cookies = await page.cookies(multipleHref);
       if (cookies.length <= 0) {
         page = await Cookie.setCookie(page);
@@ -149,9 +152,9 @@ async function fetchMultipleHref (multipleHref, pageAttemptTimes = 0) {
         const content = await page.content();
         try {
           await parseMultipleContent(content);
-          resolve();
+          // resolve();
         } catch (err) {
-          resolve();
+          // resolve();
         }
       } catch (err) {
         userController.spinner.text = '进入Manga模式页面失败';
@@ -166,12 +169,15 @@ async function fetchMultipleHref (multipleHref, pageAttemptTimes = 0) {
           resolve(await fetchMultipleHref(multipleHref, newAttempt));
         } else {
           console.log(`跳转到目标页面失败:${multipleHref}`.yellow);
-          await page.close();
-          resolve();
+          // await page.close();
+          // resolve();
         }
       }
     } catch (err) {
       console.log('[async fetchMediumUrl catch err in promise]', err);
+      // resolve();
+    } finally {
+      page && !page.isClosed() && await page.close();
       resolve();
     }
 

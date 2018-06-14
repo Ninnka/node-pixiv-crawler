@@ -43,7 +43,6 @@ async function getPureMangaImg (imgPath) {
  */
 async function fetchPureImg (illustUrl, filename, pageAttemptTimes = 0) {
   return new Promise(async (resolve, reject) => {
-    // console.log(`下载图片中:${filename}`.gray);
     userController.spinner.stop();
     userController.spinner.color = 'yellow';
     userController.spinner.text = `下载图片中:${filename}`.gray;
@@ -55,7 +54,6 @@ async function fetchPureImg (illustUrl, filename, pageAttemptTimes = 0) {
       .timeout(60 * 1000)
       .end(async (err, res) => {
         if (err) {
-          // console.log(`下载图片失败:${filename}`.red);
           userController.spinner.text = `下载图片失败:${filename}`.red;
           userController.spinner.fail();
           // console.log(err);
@@ -68,7 +66,6 @@ async function fetchPureImg (illustUrl, filename, pageAttemptTimes = 0) {
             resolve();
           }
         } else {
-          // console.log(`下载图片成功:${filename}`.green);
           userController.spinner.text = `下载图片成功:${filename}`.green;
           userController.spinner.succeed();
           if (res.body) {
