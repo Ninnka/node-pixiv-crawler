@@ -5,6 +5,7 @@ const colors = require('colors');
 const puppeteer = require('puppeteer');
 
 const parseUserUrl = require('../reptile/parseUserUrl');
+const Cookie = require('../utils/cookies');
 
 const pathController = require('../reptile/PathController');
 const userController = require('../reptile/UserController');
@@ -20,6 +21,7 @@ program
   .option('-f, --finish [finish_page]', 'Set the [finish_page]', '')
   .option('-o, --output [output_path]', 'Set the img [output_path]', '')
   .option('-n, --file-name [file_name]', 'Custom [file_name]', '')
+  .option('--set-cookie [cookie]', 'storage cookie in local file', '')
   .parse(process.argv);
 
 let params = '';
@@ -90,4 +92,18 @@ async function FetchingData () {
     });
 }
 
-FetchingData();
+async function main () {
+  if (program.setCookie) {
+    await Cookie.storageCookieToLocal(program.setCookie);
+    process.exit(0);
+  } else {
+    try {
+      await Cookie.readCookieFromLocal();
+      FetchingData();
+    } catch (err) {
+      process.exit(0);
+    }
+  }
+}
+
+main();

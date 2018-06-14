@@ -33,6 +33,12 @@ crawlP -i 69130605,69147451 [-n iqwe{fn}dwqo]
 crawlU -i 396769 -c 12
 ```
 
+获取数据前要登录pixiv，可以使用 `--set-cookie` 保存 `PHPSESSID`，具体的值去浏览器查看
+```bash
+crawlP --set-cookie '你的PHPSESSID'
+```
+如果 `PHPSESSID` 更新了，记得更新保存的 `PHPSESSID`
+
 ## Todos
 
 - 分析特辑的图片数据

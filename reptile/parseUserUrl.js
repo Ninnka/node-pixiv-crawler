@@ -96,7 +96,7 @@ async function fetchUserUrl (userUrl, attemptTimes = 0) {
     userController.spinner.start();
     superagent
       .get(userUrl)
-      .set('Cookie', Cookie.cookiesStr)
+      .set('Cookie', Cookie.cookiesStr())
       .timeout(60 * 1000)
       .end(async (err, res) => {
         if (err) {
@@ -161,11 +161,15 @@ async function parseUserPage (pageContent, userUrl) {
     // * 剩余数量（如果设置了爬取图片的数量限制）
     let remainItems = userController.count ? userController.remainItems() : '';
 
-    // * 保存用户名
-    if (!userController.userName) {
-      const _userName$ = $('a.user-name');
-      const userName = _userName$.attr('title').trim();
-      userController.setUserName(userName ? userName : '');
+    try {
+      // * 保存用户名
+      if (!userController.userName) {
+        const _userName$ = $('a.user-name');
+        const userName = _userName$.attr('title').trim();
+        userController.setUserName(userName ? userName : '');
+      }
+    } catch (err) {
+
     }
 
     // * 保存用户作品数或收藏数

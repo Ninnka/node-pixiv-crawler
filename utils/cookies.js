@@ -1,4 +1,7 @@
 const moment = require('moment');
+const fs = require('fs');
+
+const userController = require('../reptile/UserController');
 
 function cookiesStringTransform (params) {
   const entries = Object.entries(params);
@@ -9,9 +12,44 @@ function cookiesStringTransform (params) {
   return res.trim();
 }
 
+async function storageCookieToLocal (cookie) {
+  return new Promise((resolve) => {
+    fs.writeFile('pixiv-cookie', cookie, (err) => {
+      if (err) {
+        // console.log(`保存失败`.red);
+        userController.spinner.text = `保存失败`.red;
+        userController.spinner.fail();
+        // console.log(err);
+      } else {
+        // console.log(`保存成功`.cyan);
+        userController.spinner.text = `保存成功`.cyan;
+        userController.spinner.succeed();
+      }
+      resolve();
+    });
+  });
+}
+
+async function readCookieFromLocal () {
+  return new Promise((resolve) => {
+    fs.readFile('pixiv-cookie','utf-8', (err, data) => {
+      if (err) {
+        userController.spinner.text = `读取 Cookie 失败`.red;
+        userController.spinner.fail();
+        reject();
+      } else {
+        userController.spinner.text = `读取 Cookie 成功`.cyan;
+        userController.spinner.succeed();
+        setCookiesObjAttr('PHPSESSID', 'value', data.toString());
+        resolve();
+      }
+    });
+  });
+}
+
 const cookiesObj = {
   PHPSESSID: {
-    value: '4262444_6c671d2904969d37f1ac355c0c7ed4a8',
+    value: '',
     domain: '.pixiv.net',
     path: '/',
     expires: '2018-07-12T06:19:27.371Z',
@@ -171,7 +209,9 @@ const cookiesObj = {
   // },
 };
 
-const cookiesStr = cookiesStringTransform(cookiesObj);
+const cookiesStr = () => {
+  return cookiesStringTransform(cookiesObj);
+};
 
 async function setCookie (page) {
   const cookies = Object.entries(cookiesObj);
@@ -202,9 +242,16 @@ async function setCookie (page) {
   });
 }
 
+async function setCookiesObjAttr (cookieType, key, value) {
+  cookiesObj[cookieType][key] = value;
+}
+
 module.exports = {
   cookiesStringTransform,
   cookiesObj,
   cookiesStr,
   setCookie,
+  setCookiesObjAttr,
+  storageCookieToLocal,
+  readCookieFromLocal
 };
