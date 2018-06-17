@@ -1,6 +1,6 @@
 {
   "name": "pixiv-crawler",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "main": "index.js",
   "bin": {
     "crawlP": "bin/fetchAndParseUrl.js",
@@ -12,7 +12,10 @@
   },
   "author": "Ninnka",
   "license": "MIT",
-  "keywords": ["pixiv", "crawler"],
+  "keywords": [
+    "pixiv",
+    "crawler"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Rennzh/node-pixiv-crawler.git"
