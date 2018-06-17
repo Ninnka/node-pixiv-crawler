@@ -2,7 +2,7 @@ const path = require('path');
 const cheerio = require('cheerio');
 const request = require('superagent');
 const superagent = require('superagent-charset')(request);
-const colors = require('colors');
+const chalk = require('chalk');
 
 const Cookie = require('../utils/cookies');
 const parseUrl = require('./parseUrl');
@@ -103,15 +103,15 @@ async function fetchUserUrl (userUrl, attemptTimes = 0) {
           // console.log('fetchUserUrl err', err);
           // console.log(`下载网页失败:${userUrl}`.yellow);
           // console.log(`准备重新下载`.yellow);
-          userController.spinner.text = `获取网页失败，准备重新下载:${userUrl}`.red;
+          userController.spinner.text = chalk.red(`获取网页失败，准备重新下载: ${userUrl}`);
           userController.spinner.fail();
           // * 重新连接下载
           try {
             if (attemptTimes < userController.attemptTimes) {
               const newAttempt = attemptTimes + 1;
               console.log('--------');
-              console.log(`重连${mediumUrl}`.yellow.bgBlack);
-              console.log(`次数${newAttempt}`.yellow.bgBlack);
+              console.log(chalk.yellow.bgBlack(`重连: ${mediumUrl}`));
+              console.log(chalk.yellow.bgBlack(`次数: ${newAttempt}`));
               console.log('--------');
               resolve(await fetchUserUrl(userUrl, newAttempt));
             }
@@ -121,7 +121,7 @@ async function fetchUserUrl (userUrl, attemptTimes = 0) {
           }
         } else {
           // console.log(`下载网页成功:${userUrl}`.green);
-          userController.spinner.text = `获取网页成功:${userUrl}`.green;
+          userController.spinner.text = chalk.green(`获取网页成功: ${userUrl}`);
           userController.spinner.succeed();
           try {
             if (res.res && res.res.text) {
@@ -129,7 +129,7 @@ async function fetchUserUrl (userUrl, attemptTimes = 0) {
               await parseUserPage(res.res.text, userUrl);
               // upres.code === 0 && resolve();
             } else {
-              userController.spinner.text = `无网页数据:${userUrl}`.yellow;
+              userController.spinner.text = chalk.yellow(`无网页数据: ${userUrl}`);
               userController.spinner.fail();
             }
           } catch (err) {
@@ -206,7 +206,7 @@ async function parseUserPage (pageContent, userUrl) {
           resolve();
         });
     } else {
-      userController.spinner.text = `解析页面数据成功，此页面没有图片数据: ${userUrl}`.yellow;
+      userController.spinner.text = chalk.yellow(`解析页面数据成功，此页面没有图片数据: ${userUrl}`);
       userController.spinner.warn();
       resolve();
       // console.log('此页面没有数据'.yellow);

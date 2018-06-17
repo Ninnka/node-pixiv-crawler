@@ -1,5 +1,6 @@
 const moment = require('moment');
 const fs = require('fs');
+const chalk = require('chalk');
 
 const userController = require('../reptile/UserController');
 
@@ -16,13 +17,11 @@ async function storageCookieToLocal (cookie) {
   return new Promise((resolve) => {
     fs.writeFile('pixiv-cookie', cookie, (err) => {
       if (err) {
-        // console.log(`保存失败`.red);
-        userController.spinner.text = `保存失败`.red;
+        userController.spinner.text = chalk.red(`保存失败`);
         userController.spinner.fail();
         // console.log(err);
       } else {
-        // console.log(`保存成功`.cyan);
-        userController.spinner.text = `保存成功`.cyan;
+        userController.spinner.text = chalk.cyan(`保存成功`);
         userController.spinner.succeed();
       }
       resolve();
@@ -31,14 +30,14 @@ async function storageCookieToLocal (cookie) {
 }
 
 async function readCookieFromLocal () {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     fs.readFile('pixiv-cookie','utf-8', (err, data) => {
       if (err) {
-        userController.spinner.text = `读取 Cookie 失败`.red;
+        userController.spinner.text = chalk.red(`读取 Cookie 失败`);
         userController.spinner.fail();
         reject();
       } else {
-        userController.spinner.text = `读取 Cookie 成功`.cyan;
+        userController.spinner.text = chalk.cyan(`读取 Cookie 成功`);
         userController.spinner.succeed();
         setCookiesObjAttr('PHPSESSID', 'value', data.toString());
         resolve();

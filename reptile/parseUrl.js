@@ -2,6 +2,7 @@ const cheerio = require('cheerio');
 // const request = require('superagent');
 // const superagent = require('superagent-charset')(request);
 const puppeteer = require('puppeteer');
+const chalk = require('chalk');
 
 const Cookie = require('../utils/cookies');
 const pureImg = require('./getPureImg');
@@ -53,12 +54,12 @@ async function fetchMediumUrl (mediumUrl, pageAttemptTimes = 0) {
           await page.close();
           const newAttempt = pageAttemptTimes + 1;
           console.log('--------');
-          console.log(`重连${mediumUrl}`.yellow.bgBlack);
-          console.log(`次数${newAttempt}`.yellow.bgBlack);
+          console.log(chalk.yellow.bgBlack(`重连: ${mediumUrl}`));
+          console.log(chalk.yellow.bgBlack(`次数: ${newAttempt}`));
           console.log('--------');
           resolve(await fetchMediumUrl(mediumUrl, newAttempt));
         } else {
-          console.log(`跳转到目标页面失败:${mediumUrl}`.yellow);
+          console.log(chalk.yellow(`跳转到目标页面失败: ${mediumUrl}`));
           // resolve();
         }
       }
@@ -163,12 +164,12 @@ async function fetchMultipleHref (multipleHref, pageAttemptTimes = 0) {
           await page.close();
           const newAttempt = pageAttemptTimes + 1;
           console.log('--------');
-          console.log(`重连${multipleHref}`.yellow.bgBlack);
-          console.log(`次数${newAttempt}`.yellow.bgBlack);
+          console.log(chalk.yellow.bgBlack(`重连: ${multipleHref}`));
+          console.log(chalk.yellow.bgBlack(`次数: ${newAttempt}`));
           console.log('--------');
           resolve(await fetchMultipleHref(multipleHref, newAttempt));
         } else {
-          console.log(`跳转到目标页面失败:${multipleHref}`.yellow);
+          console.log(chalk.yellow(`跳转到目标页面失败: ${multipleHref}`));
           // await page.close();
           // resolve();
         }
@@ -288,12 +289,12 @@ async function fetchPureMangaPage (pageHref, pageAttemptTimes = 0) {
           await page.close();
           const newAttempt = pageAttemptTimes + 1;
           console.log('--------');
-          console.log(`重连${pageHref}`.yellow.bgBlack);
-          console.log(`次数${newAttempt}`.yellow.bgBlack);
+          console.log(chalk.yellow.bgBlack(`重连: ${pageHref}`));
+          console.log(chalk.yellow.bgBlack(`次数: ${newAttempt}`));
           console.log('--------');
           resolve(await fetchPureMangaPage(pageHref, newAttempt));
         } else {
-          console.log(`跳转到目标页面失败:${pageHref}`.yellow);
+          console.log(chalk.yellow(`跳转到目标页面失败: ${pageHref}`));
           await page.close();
           resolve();
         }

@@ -3,7 +3,7 @@ const path = require('path');
 const querystring = require('querystring');
 const request = require('superagent');
 const superagent = require('superagent-charset')(request);
-// const colors = require('colors');
+const chalk = require('chalk');
 const moment = require('moment');
 
 const referer = 'https://www.pixiv.net/';
@@ -45,7 +45,7 @@ async function fetchPureImg (illustUrl, filename, pageAttemptTimes = 0) {
   return new Promise(async (resolve, reject) => {
     userController.spinner.stop();
     userController.spinner.color = 'yellow';
-    userController.spinner.text = `下载图片中:${filename}`.gray;
+    userController.spinner.text = chalk.gray(`下载图片中: ${filename}`);
     userController.spinner.start();
     superagent
       .get(illustUrl)
@@ -54,19 +54,22 @@ async function fetchPureImg (illustUrl, filename, pageAttemptTimes = 0) {
       .timeout(60 * 1000)
       .end(async (err, res) => {
         if (err) {
-          userController.spinner.text = `下载图片失败:${filename}`.red;
+          userController.spinner.text = chalk.red(`下载图片失败: ${filename}`);
           userController.spinner.fail();
           // console.log(err);
           // * 重新连接下载
           if (pageAttemptTimes < userController.pageAttemptTimes) {
             const newAttempt = pageAttemptTimes + 1;
-            console.log(`重连次数${newAttempt}`.yellow.bgBlack);
+            console.log('--------');
+            console.log(chalk.yellow.bgBlack(`重新下载: ${illustUrl}`));
+            console.log(chalk.yellow.bgBlack(`尝试次数: ${newAttempt}`));
+            console.log('--------');
             resolve(await fetchPureImg(illustUrl, filename, newAttempt));
           } else {
             resolve();
           }
         } else {
-          userController.spinner.text = `下载图片成功:${filename}`.green;
+          userController.spinner.text = chalk.green(`下载图片成功: ${filename}`);
           userController.spinner.succeed();
           if (res.body) {
             await writeBufferPureImg(res.body, filename);
@@ -91,6 +94,9 @@ async function writeBufferPureImg (buffer, filename) {
       const dateFormated = moment().format('YYYY-MM-DD');
       dirPath = path.join(process.cwd(), `${dateFormated} pixiv`);
     }
+    if (userController.userName) {
+      dirPath = dirPath + ` ${userController.userName}`;
+    }
     if (!fsExistsSync(dirPath)) {
       fs.mkdirSync(`${dirPath}`);
     }
@@ -105,13 +111,13 @@ async function writeBufferPureImg (buffer, filename) {
     fs.writeFile(filenameFull, buffer, (err) => {
       if (err) {
         // console.log(`保存失败:${filenameFull}`.red);
-        userController.spinner.text = `保存失败`.red;
+        userController.spinner.text = chalk.red(`保存失败`);
         userController.spinner.fail();
         // console.log(err);
         resolve();
       } else {
         // console.log(`保存成功:${filenameFull}`.cyan);
-        userController.spinner.text = `保存成功:${filenameFull}`.cyan;
+        userController.spinner.text = chalk.cyan(`保存成功: ${filenameFull}`);
         userController.spinner.succeed();
         resolve();
       }
