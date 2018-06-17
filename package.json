@@ -12,6 +12,7 @@
   },
   "author": "Ninnka",
   "license": "MIT",
+  "keywords": ["pixiv", "crawler"],
   "repository": {
     "type": "git",
     "url": "https://github.com/Rennzh/node-pixiv-crawler.git"
